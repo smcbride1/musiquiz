@@ -1,2 +1,0 @@
-class QuestionsQuizzesController < ApplicationController
-end
