@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :question_choices
   resources :questions
   resources :results
   resources :questions_quizzes
