@@ -1,4 +1,5 @@
 class QuestionChoiceSerializer
   include FastJsonapi::ObjectSerializer
-  attributes 
+  attributes :text
+  belongs_to :question
 end
