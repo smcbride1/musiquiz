@@ -41,6 +41,10 @@ class QuizzesController < ApplicationController
         Quiz.all
     end
 
+    def generate
+        render json: QuizSerializer.new(Quiz.generate(params[:q], params[:length])).to_detailed_serialized_json
+    end
+
     def quiz_params
         params.require(:quiz).permit(:name)
     end

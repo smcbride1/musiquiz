@@ -5,7 +5,7 @@ class CreateQuestions < ActiveRecord::Migration[6.0]
       t.string :question_type
       t.string :artist_name
       t.string :song_name
-      t.string :youtube_url
+      t.string :youtube_video_id
       t.integer :start_time
       t.integer :answer
 
