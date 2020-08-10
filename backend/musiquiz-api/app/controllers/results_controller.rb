@@ -13,11 +13,11 @@ class ResultsController < ApplicationController
         render json: UserSerializer.new(users, options)
     end
 
-    def result
-        Result.find(params[:id])
-    end
-
     def results
         Result.all
+    end
+    
+    def result
+        Result.find(params[:id])
     end
 end

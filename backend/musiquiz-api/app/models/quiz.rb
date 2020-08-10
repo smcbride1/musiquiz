@@ -25,7 +25,7 @@ class Quiz < ApplicationRecord
                 choice_count = 4
                 answer_id = rand(choice_count)
                 while i2 < choice_count
-                    if i2 != answer_id
+                    if i2 == answer_id
                         video_choice = video
                         QuestionChoice.create(question_id: question.id, text: video_choice[:title])
                     else
@@ -93,7 +93,7 @@ class Quiz < ApplicationRecord
             duration_seconds += duration_string.split("M")[0].to_i * 60
             duration_string = duration_string.split("M")[1]
         end
-        
+        byebug
         duration_seconds += duration_string.split("S")[0].to_i
         duration_string = duration_string.split("S")[1]
 

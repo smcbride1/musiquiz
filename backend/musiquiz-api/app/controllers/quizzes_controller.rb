@@ -32,13 +32,13 @@ class QuizzesController < ApplicationController
             response_status(false, "Failed to update quiz")
         end
     end
+    
+    def quizzes
+        Quiz.all
+    end
 
     def quiz
         Quiz.find(params[:id])
-    end
-
-    def quizzes
-        Quiz.all
     end
 
     def generate

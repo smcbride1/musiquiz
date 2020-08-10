@@ -8,11 +8,11 @@ class QuestionSerializer
       include: {
         quiz: {
           except: [:updated_at]
-        }
-        question_choice: {
+        }, 
+        question_choices: {
           only: [:text]
         }
-      }
+      }, 
       except: [:answer, :created_at, :updated_at]
     )
   end
