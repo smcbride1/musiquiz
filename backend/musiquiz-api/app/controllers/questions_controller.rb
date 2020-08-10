@@ -1,10 +1,10 @@
 class QuestionsController < ApplicationController
     def index
-        render json: Question.all
+        render json: QuestionSerializer.new(quizzes).to_serialized_json
     end
 
     def show
-        render json: Question.find(params[:id])
+        render json: QuestionSerializer.new(quiz).to_serialized_json
     end
 
     def create
@@ -17,6 +17,14 @@ class QuestionsController < ApplicationController
 
     def delete
         render json: Question.all
+    end
+
+    def question
+        Question.find(params[:id])
+    end
+
+    def questions
+        Question.all
     end
 
     def question_params

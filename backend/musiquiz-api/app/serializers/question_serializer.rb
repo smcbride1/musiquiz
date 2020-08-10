@@ -1,6 +1,19 @@
 class QuestionSerializer
-  include FastJsonapi::ObjectSerializer
-  attributes :question_type, :artist_name, :song_name, :youtube_url, :start_time
-  belongs_to :quiz
-  has_many :question_choices
+  def initialize(question_object)
+    @question = question_object
+  end
+
+  def to_serialized_json
+    @question.to_json(
+      include: {
+        quiz: {
+          except: [:updated_at]
+        }
+        question_choice: {
+          only: [:text]
+        }
+      }
+      except: [:answer, :created_at, :updated_at]
+    )
+  end
 end

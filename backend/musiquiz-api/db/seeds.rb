@@ -5,10 +5,9 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-User.find_or_create_by(name: "Test Account", username: "test", email: "test@gmail.com", password_digest: "test")
 
-Quiz.find_or_create_by(user_id: 1, name: "Test Quiz", custom: true)
-Quiz.find_or_create_by(user_id: 1, name: "Shakewell Quiz", custom: false)
+Quiz.find_or_create_by(name: "Test Quiz", custom: true)
+Quiz.find_or_create_by(name: "Shakewell Quiz", custom: false)
 
 Question.find_or_create_by(quiz_id: 2, question_type: "artist_song", artist_name: "Shakewell", song_name: "Late Night", youtube_url: "https://www.youtube.com/watch?v=JknIs_S4eEo", start_time: 38, answer: 2)
 

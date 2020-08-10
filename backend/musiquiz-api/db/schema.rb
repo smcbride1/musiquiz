@@ -10,6 +10,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 0) do
+ActiveRecord::Schema.define(version: 2020_08_07_055235) do
+
+  create_table "question_choices", force: :cascade do |t|
+    t.integer "question_id"
+    t.string "text"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.integer "quiz_id"
+    t.string "question_type"
+    t.string "artist_name"
+    t.string "song_name"
+    t.string "youtube_url"
+    t.integer "start_time"
+    t.integer "answer"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "quizzes", force: :cascade do |t|
+    t.string "name"
+    t.boolean "custom"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "results", force: :cascade do |t|
+    t.integer "quiz_id"
+    t.integer "correct_answer_count"
+    t.integer "total_question_count"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
 end

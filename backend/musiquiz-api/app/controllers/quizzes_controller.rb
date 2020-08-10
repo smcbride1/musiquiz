@@ -1,16 +1,10 @@
 class QuizzesController < ApplicationController
-    def show
-        options = {
-            include: [:question]
-        }
-        render json: QuizSerializer.new(quiz, options)
+    def index
+        render json: QuizSerializer.new(quizzes).to_basic_serialized_json
     end
 
-    def index
-        options = {
-            include: [:question]
-        }
-        render json: QuizSerializer.new(quizzes, options)
+    def show
+        render json: QuizSerializer.new(quiz).to_detailed_serialized_json
     end
 
     def create
@@ -31,7 +25,7 @@ class QuizzesController < ApplicationController
     end
 
     def update
-        authorize?(params[:quiz_id])
+        authorize?(params[:id])
         if quiz.update(quiz_params)
             response_status(true, "Successfully updated quiz")
         else
@@ -40,7 +34,7 @@ class QuizzesController < ApplicationController
     end
 
     def quiz
-        Quiz.find(params[:quiz_id])
+        Quiz.find(params[:id])
     end
 
     def quizzes

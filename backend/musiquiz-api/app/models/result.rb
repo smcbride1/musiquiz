@@ -1,4 +1,3 @@
-class Result < ApplicationRecord
-    belongs_to :user
+class Result < ApplicationRecords
     belongs_to :quiz
 end
