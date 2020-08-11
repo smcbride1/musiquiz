@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   resources :question_choices
+
+  scope "/questions" do
+    post "/submit_answer", to: "questions#submit_answer"
+  end
   resources :questions
 
   scope "/quizzes" do

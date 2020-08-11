@@ -6,6 +6,11 @@ class QuestionsController < ApplicationController
     def show
         render json: QuestionSerializer.new(question).to_serialized_json
     end
+
+    def submit_answer
+        Question.find(params[:id])
+        
+    end
     
     def questions
         Question.all
