@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(version: 2020_08_07_055235) do
     t.string "question_type"
     t.string "artist_name"
     t.string "song_name"
-    t.string "youtube_video_id"
-    t.integer "start_time"
+    t.string "itunes_artwork_url"
+    t.string "itunes_preview_url"
     t.integer "answer"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

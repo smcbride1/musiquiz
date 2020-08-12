@@ -18,7 +18,12 @@ class QuizSerializer
     @quiz.to_json(
       include: {
         questions: {
-          except: [:quiz_id, :updated_at, :created_at, :answer]
+          except: [:quiz_id, :updated_at, :created_at],
+          include: {
+            question_choices: {
+              except: [:updated_at, :created_at]
+            }
+          }
         }
       },
       except: [:updated_at]

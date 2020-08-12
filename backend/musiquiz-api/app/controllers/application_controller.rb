@@ -18,4 +18,14 @@ class ApplicationController < ActionController::API
             message: message
         }
     end
+
+    def top_artists
+        artists = BillboardAPI.artist_100(true).sample(50)
+        # artists.each do |artist|
+        #     if artist[:img_url].include?("53x53")
+        #         artist[:img_url] = "#{artist[:img_url].split("-53x53.jpg")[0]}.jpg"
+        #     end
+        # end
+        render json: artists
+    end
 end

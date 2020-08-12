@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+p {
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: #000000;
+    text-align: center;
+}
+
+h1 {
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    color: #000000;
+    text-align: center;
+ }
+
+ h2 {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    color: #4D4D4D;
+    text-align: center;
+ }
+
+a {
+    text-decoration: none;
+    color: #4D4D4D;
+}
+
+a:hover {
+    opacity: 50%;
+}
+
+.nav__links li {
+    text-decoration: none;
+    list-style: none;
+
+    font-family: "Poppins", serif;
+    font-weight: 500;
+    font-size: 20px;
+    color: #4D4D4D;
+
+    display: inline-block;
+    padding: 0px 10px; /* Space between the nav links. Seperate 0px (top/bottom) from 10px (right/left) with a space, NOT A COMMA*/
+}
+
+button, input[type=submit] {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    color: #ffffff;
+    background-color: #4D4D4D;
+    text-decoration: none;
+    border-radius: 50px;
+    text-align: center;
+    border: none;
+   
+    padding: 6px 30px;
+
+    cursor: pointer;
+}
+
+input[type=text] {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    height: 20px;
+    border-radius: 20px;
+    padding: 18px;
+    border: 1px, black;
+};
+
+.logo {
+    cursor: pointer;
+ }
+
+ header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #4D4D4D;
+ }
+
+ div.wrapper {
+    text-align: center;
+    padding-top: 10px;
+ }
+
+#page-container {
+    position: relative;
+    min-height: 100vh;
+};
+
+ #content-wrap {
+    padding-bottom: 4rem;
+};
+
+.card {
+    border: 1px solid black;
+    transition: 0.3s;
+    overflow: hidden;
+    flex: 1 0 500px;
+    box-sizing: border-box;
+    margin: 1rem .25em;
+ }
+ 
+ .container {
+    padding: 2px 0px;
+    text-align: center;
+ }
+
+ .card-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 10px;
+ }
+
+ #loading {
+     width: 50px;
+     height: 50px;
+     border: 8px solid #ccc;
+     border-top-color: #ff6a00;
+     border-radius: 100%;
+     position: relative;
+     margin: auto;
+     animation: round 2s linear infinite;
+ }
+
+ @keyframes round {
+     from {transform: rotate(0deg)}
+     to {transform: rotate(360deg)}
+ }
