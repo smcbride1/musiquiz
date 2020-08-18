@@ -1,17 +1,19 @@
 const hostname = "http://localhost:3000";
 
-function renderInital() {
+//Renders base divs, should always be rendered first
+function renderInitial() {
     document.querySelector(".logo").addEventListener("click", () => renderHome())
     let contentWrap = document.querySelector("div#content-wrap");
     contentWrap.appendChild(document.createElement("br"));
     let wrapper = document.querySelector("div.wrapper");
 }
 
+//Renders home
 function renderHome() {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
     let h1 = document.createElement("h1");
-    h1.innerText = "Are You a True Fan?";
+    h1.innerText = "Die Hard Fan?";
     wrapper.appendChild(h1);
 
     let h2 = document.createElement("h2");
@@ -46,12 +48,14 @@ function renderHome() {
     getRequest(`${hostname}/top_artists`, renderArtistCards);
 };
 
+//Renders mutliple artist cards
 function renderArtistCards(artistHash) {
     for (let artist of artistHash) {
         renderArtistCard(artist.name, artist.img_url);
     }
 }
 
+//Renders single artists card
 function renderArtistCard(artistName, imgUrl) {
     let truncatedArtistName = artistName.substring(0, 17);
     let cardContainer = document.querySelector(".card-container");
@@ -79,6 +83,7 @@ function renderArtistCard(artistName, imgUrl) {
     div2.appendChild(p);
 }
 
+//Renders quiz lobby (pre quiz area)
 function renderQuizLobby(artistName) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
@@ -105,6 +110,8 @@ function renderQuizLobby(artistName) {
     wrapper.appendChild(button);
 }
 
+
+//Renders loading spinner and text
 function renderLoadingScreen(text) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
@@ -119,17 +126,20 @@ function renderLoadingScreen(text) {
     wrapper.appendChild(loadingSpinner);
 }
 
+//Renders loading screen and fetches quizzes
 function renderQuiz(artistName) {
     clearWrapper();
     renderLoadingScreen("Generating your quiz, please wait");
     getRequest(`${hostname}/quizzes/generate?q=${artistName}&length=${10}`, startQuiz);
 }
 
+//Creates new QuizAttempt and renders first question
 function startQuiz(quiz) {
     let quizAttempt = new QuizAttempt(quiz.id);
     renderQuestion(quiz, quizAttempt);
 }
 
+//Renders a question as well as it's choices
 function renderQuestion(quiz, quizAttempt, questionIndex=0) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
@@ -160,6 +170,7 @@ function renderQuestion(quiz, quizAttempt, questionIndex=0) {
     wrapper.appendChild(audio);
 }
 
+//Checks if answer was correct, updates current quizAttempt, and renders the next question
 function answerQuestion(quiz, quizAttempt, questionIndex, answerIndex) {
     let correct = answerIndex === quiz.questions[questionIndex].answer;
     let questionAttempt = new QuestionAttempt(questionIndex, correct);
@@ -167,12 +178,12 @@ function answerQuestion(quiz, quizAttempt, questionIndex, answerIndex) {
     renderQuestionResult(quiz, quizAttempt, questionIndex, correct);
 }
 
+//Renders result of an answer
 function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
     let h1 = document.createElement("h1");
     h1.innerText = correct ? "Correct!" : "Incorrect";
-    //h1.style.color = correct ? green : red;
     wrapper.appendChild(h1);
 
     let h2 = document.createElement("h2");
@@ -190,6 +201,7 @@ function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
     wrapper.appendChild(button);
 }
 
+//Renders result of a quiz
 function renderQuizResult(quiz, quizAttempt) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
@@ -210,12 +222,14 @@ function renderQuizResult(quiz, quizAttempt) {
     wrapper.appendChild(button);
 }
 
+//General get resquest function
 function getRequest(url, func) {
     fetch(url)
         .then(response => response.json())
         .then(func);
 }
 
+//Clears wrapper of all content
 function clearWrapper() {
     document.querySelector(".wrapper").innerHTML = "";
 }
@@ -234,5 +248,5 @@ class QuizAttempt {
     }
 }
 
-renderInital();
+renderInitial();
 renderHome();
