@@ -1,65 +1,128 @@
 const hostname = "http://localhost:3000";
 
+class Render {
+    static querySelector(query) {
+        if (typeof(query) === "string") {
+            return document.querySelector(query);
+        } else {
+            return query;
+        }
+    }
+
+    static h1(parent, innerText) {
+        let h1 = document.createElement("h1");
+        h1.innerText = innerText;
+        this.querySelector(parent).appendChild(h1);
+        return h1;
+    }
+
+    static h2(parent, innerText) {
+        let h2 = document.createElement("h2");
+        h2.innerText = innerText;
+        this.querySelector(parent).appendChild(h2);
+        return h2;
+    }
+
+    static br(parent) {
+        let br = document.createElement("br");
+        this.querySelector(parent).appendChild(br);
+        return br;
+    }
+
+    static inputText(parent, id, placeholder) {
+        let input = document.createElement("input");
+        input.type = "text";
+        input.id = id;
+        input.placeholder = placeholder;
+        this.querySelector(parent).appendChild(input);
+        return input;
+    }
+
+    static button(parent, id, innerText, name="") {
+        let button = document.createElement("button");
+        button.id = id;
+        button.innerText = innerText;
+        if (!name) {
+            button.name = name;
+        }
+        this.querySelector(parent).appendChild(button);
+        return button;
+    }
+
+    static div(parent, className) {
+        let div = document.createElement("div");
+        div.className = className;
+        this.querySelector(parent).appendChild(div);
+        return div;
+    }
+
+    static a(parent) {
+        let a = document.createElement("a");
+        this.querySelector(parent).appendChild(a);
+        return a;
+    }
+
+    static img(parent, imgUrl, alt, style) {
+        let img = document.createElement("img")
+        img.src = imgUrl;
+        img.alt = alt;
+        img.style = style;
+        this.querySelector(parent).appendChild(img);
+        return img;
+    }
+
+    static p(parent, innerText) {
+        let p = document.createElement("p");
+        p.innerText = innerText;
+        this.querySelector(parent).appendChild(p);
+        return p;
+    }
+
+    static audio(parent, volume, src, autoplay) {
+        let audio = document.createElement("audio");
+        audio.volume = volume;
+        audio.src = src;
+        audio.autoplay = autoplay;
+        this.querySelector(parent).appendChild(audio);
+        return audio;
+    }
+}
+
 //Renders base divs, should always be rendered first
 function renderInitial() {
-    document.querySelector(".logo").addEventListener("click", () => renderHome())
-    document.querySelector("#recent-results").addEventListener("click", () => getRequest(`${hostname}/results`, renderRecentResults))
-    let contentWrap = document.querySelector("div#content-wrap");
-    contentWrap.appendChild(document.createElement("br"));
-    let wrapper = document.querySelector("div.wrapper");
+    document.querySelector(".logo").addEventListener("click", () => renderHome());
+    document.querySelector("#recent-results").addEventListener("click", () => getRequest(`${hostname}/results`, renderRecentResults));
+    Render.br("div#content-wrap");
 }
 
 //Renders results
 function renderRecentResults(results) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = "Recent Results";
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", "Recent Results")
 
     for (let result of results.reverse()) {
-        let h2 = document.createElement("h2");
-        h2.innerText = `${result.name} scored ${result.correct_answer_count}/${result.total_question_count} on the ${result.quiz.name}`;
-        wrapper.appendChild(h2);
+        Render.h2("div.wrapper", `${result.name} scored ${result.correct_answer_count}/${result.total_question_count} on the ${result.quiz.name}`)
     }
 }
 
 //Renders home
 function renderHome() {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = "Die Hard Fan?";
-    wrapper.appendChild(h1);
 
-    let h2 = document.createElement("h2");
-    h2.innerText = "Test your knowledge";
-    wrapper.appendChild(h2);
+    Render.h1("div.wrapper", "Die Hard Fan?");
+    Render.h2("div.wrapper", "Test your knowledge");
+    Render.h2("div.wrapper", "Search for your favorite artist");
 
-    h2 = document.createElement("h2");
-    h2.innerText = "Search for your favorite artist";
-    wrapper.appendChild(h2);
+    Render.br("div.wrapper");
 
-    wrapper.appendChild(document.createElement("br"));
+    Render.inputText("div.wrapper", "search-text", "Search...");
 
-    let input = document.createElement("input");
-    input.type = "text";
-    input.id = "search-text";
-    input.placeholder = "Search...";
-    wrapper.appendChild(input);
+    Render.button("div.wrapper", "search-button", "Search").addEventListener("click", () => renderQuizLobby(document.querySelector("#search-text").value));
 
-    let button = document.createElement("button");
-    button.id = "search-button";
-    button.innerText = "Search";
-    button.addEventListener("click", () => renderQuizLobby(input.value));
-    wrapper.appendChild(button);
+    Render.br("div.wrapper");
+    Render.br("div.wrapper");
 
-    wrapper.appendChild(document.createElement("br"));
-    wrapper.appendChild(document.createElement("br"));
-
-    let cardContainer = document.createElement("div");
-    cardContainer.className = "card-container";
-    wrapper.appendChild(cardContainer);
+    Render.div("div.wrapper", "card-container");
 
     getRequest(`${hostname}/top_artists`, renderArtistCards);
 };
@@ -76,70 +139,40 @@ function renderArtistCard(artistName, imgUrl) {
     let truncatedArtistName = artistName.substring(0, 17);
     let cardContainer = document.querySelector(".card-container");
 
-    let a = document.createElement("a");
-    cardContainer.appendChild(a);
+    let a = Render.a(".card-container");
+    a.addEventListener("click", () => renderQuizLobby(artistName));
 
-    let div = document.createElement("div");
-    div.className = "card";
-    a.appendChild(div);
-    div.addEventListener("click", () => renderQuizLobby(artistName));
+    let card = Render.div(a, "card")
 
-    let img = document.createElement("img");
-    img.src = imgUrl;
-    img.alt = truncatedArtistName;
-    img.style = "width: 174px";
-    div.appendChild(img);
+    Render.img(card, imgUrl, truncatedArtistName, "width: 174px");
+    
+    let container = Render.div(card, "container");
 
-    let div2 = document.createElement("div");
-    div2.className = "container";
-    div.appendChild(div2);
-
-    let p = document.createElement("p");
-    p.innerText = truncatedArtistName;
-    div2.appendChild(p);
+    Render.p(container, truncatedArtistName);
 }
 
 //Renders quiz lobby (pre quiz area)
 function renderQuizLobby(artistName) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = `Take The ${artistName} Quiz!`;
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", `Take The ${artistName} Quiz!`);
+    Render.h2("div.wrapper", "Enter your name:");
 
-    let h2 = document.createElement("h2");
-    h2.innerText = "Enter your name:";
-    wrapper.appendChild(h2);
+    Render.br("div.wrapper");
 
-    wrapper.appendChild(document.createElement("br"));
+    Render.inputText("div.wrapper", "name-text" ,"Name...");
 
-    let input = document.createElement("input");
-    input.type = "text";
-    input.id = "name-text";
-    input.placeholder = "Name...";
-    wrapper.appendChild(input);
-
-    let button = document.createElement("button");
-    button.id = "start-button";
-    button.innerText = "Start";
-    button.addEventListener("click", () => renderQuiz(artistName, document.querySelector("#name-text").value));
-    wrapper.appendChild(button);
+    Render.button("div.wrapper", "start-button", "Start").addEventListener("click", () => renderQuiz(artistName, document.querySelector("#name-text").value));
 }
 
 
 //Renders loading spinner and text
 function renderLoadingScreen(text) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = text;
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", text);
 
-    wrapper.appendChild(document.createElement("br"));
+    Render.br("div.wrapper");
 
-    let loadingSpinner = document.createElement("div")
-    loadingSpinner.id = "loading";
-    wrapper.appendChild(loadingSpinner);
+    Render.div("div.wrapper", "loading");
 }
 
 //Renders loading screen and fetches quizzes
@@ -159,32 +192,21 @@ function startQuiz(quiz, name) {
 //Renders a question as well as it's choices
 function renderQuestion(quiz, quizAttempt, questionIndex=0) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
     let questionText;
     switch(quiz.questions[questionIndex].question_type) {
         case "guess_the_song_title":
             questionText = "What is the name of this song?"
         break;
     };
-    h1.innerText = questionText;
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", questionText);
 
     for (let i = 0; i < quiz.questions[questionIndex].question_choices.length; i++) {
         let choice = quiz.questions[questionIndex].question_choices[i];
         let button = document.createElement("button");
-        button.id = "choice-button";
-        button.name = choice.id;
-        button.innerText = choice.text;
-        button.addEventListener("click", () => answerQuestion(quiz, quizAttempt, questionIndex, i));
-        wrapper.appendChild(button);
+        Render.button("div.wrapper", "choice-button", choice.text, choice.id).addEventListener("click", () => answerQuestion(quiz, quizAttempt, questionIndex, i));
     }
 
-    let audio = document.createElement("audio");
-    audio.volume = 0.5;
-    audio.src = quiz.questions[questionIndex].itunes_preview_url;
-    audio.autoplay = true;
-    wrapper.appendChild(audio);
+    Render.audio("div.wrapper", 0.5, quiz.questions[questionIndex].itunes_preview_url, true)
 }
 
 //Checks if answer was correct, updates current quizAttempt, and renders the next question
@@ -198,24 +220,16 @@ function answerQuestion(quiz, quizAttempt, questionIndex, answerIndex) {
 //Renders result of an answer
 function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = correct ? "Correct!" : "Incorrect";
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", correct ? "Correct!" : "Incorrect");
 
-    let h2 = document.createElement("h2");
-    h2.innerText = `Answer: ${quiz.questions[questionIndex].question_choices[quiz.questions[questionIndex].answer].text}`;
-    wrapper.appendChild(h2);
+    Render.h2("div.wrapper", `Answer: ${quiz.questions[questionIndex].question_choices[quiz.questions[questionIndex].answer].text}`);
 
-    let button = document.createElement("button");
-    button.id = "next-button";
-    button.innerText = "Next Question";
+    let button = Render.button("div.wrapper", "next-button", "Next Question");
     if (quiz.questions.length > questionIndex + 1) {
         button.addEventListener("click", () => renderQuestion(quiz, quizAttempt, questionIndex + 1));
     } else {
         button.addEventListener("click", () => createQuizResult(quiz, quizAttempt));
     }
-    wrapper.appendChild(button);
 }
 
 function createQuizResult(quiz, quizAttempt) {
@@ -234,20 +248,11 @@ function createQuizResult(quiz, quizAttempt) {
 //Renders result of a quiz
 function renderQuizResult(quiz, result) {
     clearWrapper();
-    let wrapper = document.querySelector("div.wrapper");
-    let h1 = document.createElement("h1");
-    h1.innerText = "Quiz Complete!";
-    wrapper.appendChild(h1);
+    Render.h1("div.wrapper", "Quiz Complete!")
 
-    let h2 = document.createElement("h2");
-    h2.innerText = `Score: ${result.correctAnswerCount}/${result.totalQuestionCount}`;
-    wrapper.appendChild(h2);
+    Render.h2("div.wrapper", `Score: ${result.correctAnswerCount}/${result.totalQuestionCount}`)
 
-    let button = document.createElement("button");
-    button.id = "home-button";
-    button.innerText = "Home";
-    button.addEventListener("click", () => renderHome());
-    wrapper.appendChild(button);
+    Render.button("div.wrapper", "home-button", "Home").addEventListener("click", () => renderHome());
 }
 
 //General get request function
