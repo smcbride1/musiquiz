@@ -3,9 +3,25 @@ const hostname = "http://localhost:3000";
 //Renders base divs, should always be rendered first
 function renderInitial() {
     document.querySelector(".logo").addEventListener("click", () => renderHome())
+    document.querySelector("#recent-results").addEventListener("click", () => getRequest(`${hostname}/results`, renderRecentResults))
     let contentWrap = document.querySelector("div#content-wrap");
     contentWrap.appendChild(document.createElement("br"));
     let wrapper = document.querySelector("div.wrapper");
+}
+
+//Renders results
+function renderRecentResults(results) {
+    clearWrapper();
+    let wrapper = document.querySelector("div.wrapper");
+    let h1 = document.createElement("h1");
+    h1.innerText = "Recent Results";
+    wrapper.appendChild(h1);
+
+    for (let result of results.reverse()) {
+        let h2 = document.createElement("h2");
+        h2.innerText = `${result.name} scored ${result.correct_answer_count}/${result.total_question_count} on the ${result.quiz.name}`;
+        wrapper.appendChild(h2);
+    }
 }
 
 //Renders home
@@ -106,7 +122,7 @@ function renderQuizLobby(artistName) {
     let button = document.createElement("button");
     button.id = "start-button";
     button.innerText = "Start";
-    button.addEventListener("click", () => renderQuiz(artistName))
+    button.addEventListener("click", () => renderQuiz(artistName, document.querySelector("#name-text").value));
     wrapper.appendChild(button);
 }
 
@@ -127,15 +143,16 @@ function renderLoadingScreen(text) {
 }
 
 //Renders loading screen and fetches quizzes
-function renderQuiz(artistName) {
-    clearWrapper();
+function renderQuiz(artistName, userName) {
     renderLoadingScreen("Generating your quiz, please wait");
-    getRequest(`${hostname}/quizzes/generate?q=${artistName}&length=${10}`, startQuiz);
+    fetch(`${hostname}/quizzes/generate?q=${artistName}&length=${10}`)
+        .then(response => response.json())
+        .then(json => startQuiz(json, userName));
 }
 
 //Creates new QuizAttempt and renders first question
-function startQuiz(quiz) {
-    let quizAttempt = new QuizAttempt(quiz.id);
+function startQuiz(quiz, name) {
+    let quizAttempt = new QuizAttempt(quiz.id, name);
     renderQuestion(quiz, quizAttempt);
 }
 
@@ -196,23 +213,34 @@ function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
     if (quiz.questions.length > questionIndex + 1) {
         button.addEventListener("click", () => renderQuestion(quiz, quizAttempt, questionIndex + 1));
     } else {
-        button.addEventListener("click", () => renderQuizResult(quiz, quizAttempt));
+        button.addEventListener("click", () => createQuizResult(quiz, quizAttempt));
     }
     wrapper.appendChild(button);
 }
 
+function createQuizResult(quiz, quizAttempt) {
+    renderLoadingScreen("Loading results");
+    let correctCount = quizAttempt.questionAttempts.map((e) => +e.correct).reduce((t, e) => t + e);
+    let totalCount = quizAttempt.questionAttempts.length;
+    result = new Result(quiz.id, quizAttempt.name, correctCount, totalCount)
+    let formData = new FormData();
+    formData.append('result[quiz_id]', result.quizId);
+    formData.append('result[name]', result.name);
+    formData.append('result[correct_answer_count]', result.correctAnswerCount);
+    formData.append('result[total_question_count]', result.totalQuestionCount);
+    postRequest(`${hostname}/results`, formData, renderQuizResult(quiz, result));
+}
+
 //Renders result of a quiz
-function renderQuizResult(quiz, quizAttempt) {
+function renderQuizResult(quiz, result) {
     clearWrapper();
     let wrapper = document.querySelector("div.wrapper");
     let h1 = document.createElement("h1");
     h1.innerText = "Quiz Complete!";
     wrapper.appendChild(h1);
 
-    let correctCount = quizAttempt.questionAttempts.map((e) => +e.correct).reduce((t, e) => t + e);
-    let totalCount = quizAttempt.questionAttempts.length;
     let h2 = document.createElement("h2");
-    h2.innerText = `Score: ${correctCount}/${totalCount}`;
+    h2.innerText = `Score: ${result.correctAnswerCount}/${result.totalQuestionCount}`;
     wrapper.appendChild(h2);
 
     let button = document.createElement("button");
@@ -222,9 +250,19 @@ function renderQuizResult(quiz, quizAttempt) {
     wrapper.appendChild(button);
 }
 
-//General get resquest function
+//General get request function
 function getRequest(url, func) {
     fetch(url)
+        .then(response => response.json())
+        .then(func);
+}
+
+//General post request function
+function postRequest(url, body, func) {
+    fetch(url, {
+        method: 'post',
+        body: body
+    })
         .then(response => response.json())
         .then(func);
 }
@@ -238,13 +276,23 @@ class QuestionAttempt {
     constructor(questionId, correct) {
         this.questionId = questionId;
         this.correct = correct;
-    }
+    }QuizAttempt
 }
 
 class QuizAttempt {
-    constructor(quizId) {
+    constructor(quizId, name) {
         this.quizId = quizId;
+        this.name = name;
         this.questionAttempts = [];
+    }
+}
+
+class Result {
+    constructor(quizId, name, correctAnswerCount, totalQuestionCount) {
+        this.quizId = quizId;
+        this.name = name;
+        this.correctAnswerCount = correctAnswerCount;
+        this.totalQuestionCount = totalQuestionCount;
     }
 }
 
