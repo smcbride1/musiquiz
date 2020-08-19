@@ -1,5 +1,14 @@
 const hostname = "http://localhost:3000";
 
+class Result {
+    constructor(quizId, name) {
+        this.quizId = quizId;
+        this.name = name;
+        this.correctAnswerCount = 0;
+        this.totalQuestionCount = 0;
+    }
+}
+
 class Render {
     static querySelector(query) {
         if (typeof(query) === "string") {
@@ -183,14 +192,14 @@ function renderQuiz(artistName, userName) {
         .then(json => startQuiz(json, userName));
 }
 
-//Creates new QuizAttempt and renders first question
+//Creates new Result and renders first question
 function startQuiz(quiz, name) {
-    let quizAttempt = new QuizAttempt(quiz.id, name);
-    renderQuestion(quiz, quizAttempt);
+    let result = new Result(quiz.id, name);
+    renderQuestion(quiz, result);
 }
 
 //Renders a question as well as it's choices
-function renderQuestion(quiz, quizAttempt, questionIndex=0) {
+function renderQuestion(quiz, result, questionIndex=0) {
     clearWrapper();
     let questionText;
     switch(quiz.questions[questionIndex].question_type) {
@@ -203,22 +212,24 @@ function renderQuestion(quiz, quizAttempt, questionIndex=0) {
     for (let i = 0; i < quiz.questions[questionIndex].question_choices.length; i++) {
         let choice = quiz.questions[questionIndex].question_choices[i];
         let button = document.createElement("button");
-        Render.button("div.wrapper", "choice-button", choice.text, choice.id).addEventListener("click", () => answerQuestion(quiz, quizAttempt, questionIndex, i));
+        Render.button("div.wrapper", "choice-button", choice.text, choice.id).addEventListener("click", () => answerQuestion(quiz, result, questionIndex, i));
     }
 
     Render.audio("div.wrapper", 0.5, quiz.questions[questionIndex].itunes_preview_url, true)
 }
 
-//Checks if answer was correct, updates current quizAttempt, and renders the next question
-function answerQuestion(quiz, quizAttempt, questionIndex, answerIndex) {
+//Checks if answer was correct, updates current Result, and renders the next question
+function answerQuestion(quiz, result, questionIndex, answerIndex) {
     let correct = answerIndex === quiz.questions[questionIndex].answer;
-    let questionAttempt = new QuestionAttempt(questionIndex, correct);
-    quizAttempt.questionAttempts.push(questionAttempt);
-    renderQuestionResult(quiz, quizAttempt, questionIndex, correct);
+    if (correct) {
+        result.correctAnswerCount += 1;
+    }
+    result.totalQuestionCount += 1;
+    renderQuestionResult(quiz, result, questionIndex, correct);
 }
 
 //Renders result of an answer
-function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
+function renderQuestionResult(quiz, result, questionIndex, correct) {
     clearWrapper();
     Render.h1("div.wrapper", correct ? "Correct!" : "Incorrect");
 
@@ -226,17 +237,14 @@ function renderQuestionResult(quiz, quizAttempt, questionIndex, correct) {
 
     let button = Render.button("div.wrapper", "next-button", "Next Question");
     if (quiz.questions.length > questionIndex + 1) {
-        button.addEventListener("click", () => renderQuestion(quiz, quizAttempt, questionIndex + 1));
+        button.addEventListener("click", () => renderQuestion(quiz, result, questionIndex + 1));
     } else {
-        button.addEventListener("click", () => createQuizResult(quiz, quizAttempt));
+        button.addEventListener("click", () => createQuizResult(quiz, result));
     }
 }
 
-function createQuizResult(quiz, quizAttempt) {
+function createQuizResult(quiz, result) {
     renderLoadingScreen("Loading results");
-    let correctCount = quizAttempt.questionAttempts.map((e) => +e.correct).reduce((t, e) => t + e);
-    let totalCount = quizAttempt.questionAttempts.length;
-    result = new Result(quiz.id, quizAttempt.name, correctCount, totalCount)
     let formData = new FormData();
     formData.append('result[quiz_id]', result.quizId);
     formData.append('result[name]', result.name);
@@ -275,30 +283,6 @@ function postRequest(url, body, func) {
 //Clears wrapper of all content
 function clearWrapper() {
     document.querySelector(".wrapper").innerHTML = "";
-}
-
-class QuestionAttempt {
-    constructor(questionId, correct) {
-        this.questionId = questionId;
-        this.correct = correct;
-    }QuizAttempt
-}
-
-class QuizAttempt {
-    constructor(quizId, name) {
-        this.quizId = quizId;
-        this.name = name;
-        this.questionAttempts = [];
-    }
-}
-
-class Result {
-    constructor(quizId, name, correctAnswerCount, totalQuestionCount) {
-        this.quizId = quizId;
-        this.name = name;
-        this.correctAnswerCount = correctAnswerCount;
-        this.totalQuestionCount = totalQuestionCount;
-    }
 }
 
 renderInitial();
